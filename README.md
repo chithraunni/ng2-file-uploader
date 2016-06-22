@@ -1,33 +1,31 @@
-# ng2-uploader
-
-For demos please see [demos page](http://ng2-uploader.com).
+# ng2-file-uploader
 
 ## Angular2 File Uploader
 
 ### Installation
 
 ```
-npm install ng2-uploader
+npm install ng2-file-uploader
 ```
 
 #### Examples
 
-1. [Basic Example](https://github.com/jkuri/ng2-uploader#basic-example)
-2. [Multiple Files Example](https://github.com/jkuri/ng2-uploader#multiple-files-example)
-3. [Basic Progressbar Example](https://github.com/jkuri/ng2-uploader#progressbar-example)
-4. [Multiple Files Progressbars Example](https://github.com/jkuri/ng2-uploader#multiple-files-progressbars-example)
+1. [Basic Example](https://github.com/spartaksun/ng2-file-uploader#basic-example)
+2. [Multiple Files Example](https://github.com/spartaksun/ng2-file-uploader#multiple-files-example)
+3. [Basic Progressbar Example](https://github.com/spartaksun/ng2-file-uploader#progressbar-example)
+4. [Multiple Files Progressbars Example](https://github.com/spartaksun/ng2-file-uploader#multiple-files-progressbars-example)
 
 #### Backend Examples
 
-1. [NodeJS using HapiJS](https://github.com/jkuri/ng2-uploader#backend-example-using-hapijs)
-2. [PHP (Plain)](https://github.com/jkuri/ng2-uploader#backend-example-using-plain-php)
+1. [NodeJS using HapiJS](https://github.com/spartaksun/ng2-file-uploader#backend-example-using-hapijs)
+2. [PHP (Plain)](https://github.com/spartaksun/ng2-file-uploader#backend-example-using-plain-php)
 
 ### Basic Example
 
 `component.ts`
 ````typescript
 import {Component} from '@angular/core';
-import {UPLOAD_DIRECTIVES} from 'ng2-uploader/ng2-file-uploader';
+import {UPLOAD_DIRECTIVES} from 'ng2-file-uploader/ng2-file-uploader';
 
 @Component({
   selector: 'demo-app',
@@ -65,7 +63,7 @@ Response: {{ uploadFile | json }}
 `component.ts`
 ````typescript
 import {Component} from '@angular/core';
-import {UPLOAD_DIRECTIVES} from 'ng2-uploader/ng2-file-uploader';
+import {UPLOAD_DIRECTIVES} from 'ng2-file-uploader/ng2-file-uploader';
 
 @Component({
   selector: 'basic-multiple',
@@ -75,7 +73,7 @@ import {UPLOAD_DIRECTIVES} from 'ng2-uploader/ng2-file-uploader';
 export class BasicMultiple {
   uploadedFiles: any[] = [];
   options: Object = {
-      url: 'http://localhost:10050/upload'
+      url: 'http://localhost:80/upload'
   };
 
   handleUpload(data): void {
@@ -106,7 +104,7 @@ Response: <br/>{{ uploadedFiles | json }}
 `component.ts`
 ````typescript
 import {Component, NgZone} from '@angular/core';
-import {UPLOAD_DIRECTIVES} from 'ng2-uploader/ng2-file-uploader';
+import {UPLOAD_DIRECTIVES} from 'ng2-file-uploader/ng2-file-uploader';
 
 @Component({
   selector: 'basic-progressbar',
@@ -119,7 +117,7 @@ export class BasicProgressbar {
   uploadResponse: Object;
   zone: NgZone;
   options: Object = {
-    url: 'http://localhost:10050/upload'
+    url: 'http://localhost:80/upload'
   };
 
   constructor() {
@@ -176,7 +174,7 @@ Response: <br/>{{ uploadFile | json }}
 `component.ts`
 ````typescript
 import {Component, NgZone} from '@angular/core';
-import {UPLOAD_DIRECTIVES} from 'ng2-uploader/ng2-file-uploader';
+import {UPLOAD_DIRECTIVES} from 'ng2-file-uploader/ng2-file-uploader';
 
 @Component({
   selector: 'multiple-progressbar',
@@ -188,7 +186,7 @@ export class MultipleProgressbar {
   uploadProgresses: any[] = [];
   zone: NgZone;
   options: Object = {
-    url: 'http://localhost:10050/upload'
+    url: 'http://localhost:80/upload'
   };
 
   constructor() {
@@ -246,7 +244,7 @@ export class MultipleProgressbar {
 `component.ts`
 ````typescript
 import {Component} from '@angular/core';
-import {UPLOAD_DIRECTIVES} from 'ng2-uploader/ng2-file-uploader';
+import {UPLOAD_DIRECTIVES} from 'ng2-file-uploader/ng2-file-uploader';
 
 @Component({
   selector: 'demo-app',
@@ -256,7 +254,7 @@ import {UPLOAD_DIRECTIVES} from 'ng2-uploader/ng2-file-uploader';
 export class DemoApp {
   uploadFile: any;
   options: Object = {
-    url: 'http://localhost:10050/upload',
+    url: 'http://localhost:80/upload',
     withCredentials: true,
     authToken: localStorage.getItem('token'),
     authTokenPrefix: "Bearer" // required only if different than "Bearer"
@@ -290,7 +288,7 @@ You may want to sent file with specific form field name. For that you can use op
 `component.ts`
 ````typescript
 import {Component} from '@angular/core';
-import {UPLOAD_DIRECTIVES} from 'ng2-uploader/ng2-file-uploader';
+import {UPLOAD_DIRECTIVES} from 'ng2-file-uploader/ng2-file-uploader';
 
 @Component({
   selector: 'demo-app',
@@ -300,7 +298,7 @@ import {UPLOAD_DIRECTIVES} from 'ng2-uploader/ng2-file-uploader';
 export class DemoApp {
   uploadFile: any;
   options: Object = {
-    url: 'http://localhost:10050/upload',
+    url: 'http://localhost:80/upload',
     fieldName: 'logo'    
   };
 
@@ -322,78 +320,6 @@ export class DemoApp {
 <div>
 Response: {{ uploadFile | json }}
 </div>
-````
-
-
-### Backend Example Using HapiJS
-
-````javascript
-'use strict';
-
-const Hapi        = require('hapi');
-const Inert       = require('inert');
-const Md5         = require('md5');
-const Multiparty  = require('multiparty');
-const fs          = require('fs');
-const path        = require('path');
-const server      = new Hapi.Server();
-
-server.connection({ port: 10050, routes: { cors: true } });
-server.register(Inert, (err) => {});
-
-const upload = {
-  payload: {
-    maxBytes: 209715200,
-    output: 'stream',
-    parse: false
-  },
-  handler: (request, reply) => {
-    const form = new Multiparty.Form();
-    form.parse(request.payload, (err, fields, files) => {
-      if (err) {
-        return reply({status: false, msg: err});
-      }
-
-      let responseData = [];
-
-      files.file.forEach((file) => {
-        let fileData = fs.readFileSync(file.path);
-        const originalName = file.originalFilename;
-        const generatedName = Md5(new Date().toString() + 
-          originalName) + path.extname(originalName);
-        const filePath = path.resolve(__dirname, 'uploads', 
-          generatedName);
-
-        fs.writeFileSync(filePath, fileData);
-        const data = {
-          originalName: originalName,
-          generatedName: generatedName
-        };
-
-        responseData.push(data);
-      });
-
-      reply({status: true, data: responseData});
-    });
-  }
-};
-
-const uploads = {
-  handler: {
-    directory: {
-      path: path.resolve(__dirname, 'uploads')
-    }
-  }
-};
-
-server.route([
-  { method: 'POST', path: '/upload',          config: upload  },
-  { method: 'GET',  path: '/uploads/{path*}', config: uploads }
-]);
-
-server.start(() => {
-  console.log('Upload server running at', server.info.uri);
-});
 ````
 
 ### Backend example using plain PHP
