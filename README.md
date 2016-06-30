@@ -34,8 +34,10 @@ import {UPLOAD_DIRECTIVES} from 'ng2-file-uploader/ng2-file-uploader';
 })
 export class DemoApp {
   uploadFile: any;
+  postId: number;
   options: Object = {
-    url: 'http://localhost:10050/upload'
+    url: 'http://localhost:10050/upload',
+    params: { 'post_id': this.postId }
   };
 
   handleUpload(data): void {

@@ -68,6 +68,7 @@ export class Ng2Uploader {
   authTokenPrefix: string = "Bearer";
   authToken: string = undefined;
   fieldName: string = "file";
+  params: any = {};
 
   _queue: any[] = [];
   _emitter: EventEmitter<any> = new EventEmitter(true);
@@ -92,6 +93,7 @@ export class Ng2Uploader {
     this.authTokenPrefix = options.authTokenPrefix != null ? options.authTokenPrefix : this.authTokenPrefix;
     this.authToken = options.authToken != null ? options.authToken : this.authToken;
     this.fieldName = options.fieldName != null ? options.fieldName : this.fieldName;
+    this.params = options.params != null ? options.params : this.params;
 
     if (!this.multiple) {
       this.maxUploads = 1;
@@ -109,6 +111,16 @@ export class Ng2Uploader {
     let xhr = new XMLHttpRequest();
     let form = new FormData();
     form.append(this.fieldName, file, file.name);
+
+    let params = {};
+    if(typeof this.params === "function") {
+      params = this.params();
+    } else {
+      params = this.params
+    }
+    for (let p in params) {
+      form.append(p, params[p]);
+    }
 
     let uploadingFile = new UploadedFile(
         this.generateRandomIndex(),
