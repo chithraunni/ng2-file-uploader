@@ -11,6 +11,8 @@ class UploadedFile {
   done: boolean;
   error: boolean;
   abort: boolean;
+  init: boolean = false;
+  inputData: {};
 
   constructor(id: string, originalName: string, size: number) {
     this.id = id;
@@ -118,15 +120,24 @@ export class Ng2Uploader {
     } else {
       params = this.params
     }
-    for (let p in params) {
-      form.append(p, params[p]);
-    }
 
     let uploadingFile = new UploadedFile(
         this.generateRandomIndex(),
         file.name,
         file.size
     );
+
+    this._emitter.emit(uploadingFile);
+
+    for (let p in params) {
+      form.append(p, params[p]);
+    }
+
+    for(let p in uploadingFile.inputData){
+      form.append(p,uploadingFile.inputData[p]);
+    }
+
+
 
     let queueIndex = this._queue.indexOf(file);
 
@@ -179,6 +190,7 @@ export class Ng2Uploader {
     }
 
     xhr.send(form);
+    uploadingFile.init = true;
   }
 
   addFilesToQueue(files: FileList[]): void {

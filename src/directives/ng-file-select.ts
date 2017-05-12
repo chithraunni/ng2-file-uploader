@@ -4,12 +4,13 @@ import {Ng2Uploader} from '../services/ng2-uploader';
 @Directive({
   selector: '[ng-file-select]',
   inputs: ['options: ng-file-select'],
-  outputs: ['onUpload'],
-  host: { '(change)': 'onFiles()' }
+  outputs: ['onUpload', 'onStart'],
+  host: { '(change)': 'onFiles()', '(upload)': 'startUpload' }
 })
 export class NgFileSelect {
   uploader: Ng2Uploader;
   options: any;
+  onStart: EventEmitter<any> = new EventEmitter();
   onUpload: EventEmitter<any> = new EventEmitter();
 
   constructor(public el: ElementRef) {
@@ -19,7 +20,12 @@ export class NgFileSelect {
     });
 
     this.uploader._emitter.subscribe((data) => {
+      if(data.init){
       this.onUpload.emit(data);
+    }
+    else {
+      this.onStart.emit(data);
+    }
     });
   }
 
@@ -28,5 +34,9 @@ export class NgFileSelect {
     if (files.length) {
       this.uploader.addFilesToQueue(files);
     }
+  }
+
+  startUpload(): void {
+     this.uploader.uploadFilesInQueue();
   }
 }
