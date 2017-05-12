@@ -73,7 +73,7 @@ export class Ng2Uploader {
   params: any = {};
 
   _queue: any[] = [];
-  _emitter: EventEmitter<any> = new EventEmitter(true);
+  _emitter: EventEmitter<any> = new EventEmitter(false);
 
   setOptions(options: any): void {
 
